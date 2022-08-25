@@ -1,7 +1,11 @@
 from PIL import Image
+import sys
 
-filename = '/Users/brian/Pictures/disco_diffusion_art/Garden(0)_0.png'
+if len(sys.argv) < 2:
+    print('Please provide a file.')
+    exit()
 
+filename = sys.argv[1]
 im = Image.open(filename)
 
 h_off = int(0.1*im.height)
@@ -35,6 +39,7 @@ for h in range(offset):
 
 im.close()
 base, ext = filename.split('.')
-import ipdb; ipdb.set_trace()
 i2.save(f'{base}_borders.{ext}')
 i2.close()
+
+print(f'New file created at: {base}_borders.{ext}')
