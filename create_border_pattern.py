@@ -1,4 +1,5 @@
 from PIL import Image
+from tqdm import tqdm
 import sys
 
 
@@ -31,14 +32,12 @@ def create_border_image(im, offset):
 
 
 def _fill_border(im, i2, offset):
-    print('Copying original pixels...')
-    for h in range(im.height):
+    for h in tqdm(range(im.height), ascii=True, desc='Copying original pixels'):
         for w in range(im.width):
             v = im.getpixel((w, h))
             i2.putpixel((w+offset, h+offset), v)
 
-    print('Creating left/right borders...')
-    for h in range(im.height):
+    for h in tqdm(range(im.height), ascii=True, desc='Creating left/right borders'):
         for w in range(offset):
             vl = im.getpixel((w, h))
             i2.putpixel((offset-w, h+offset), vl)
@@ -46,9 +45,8 @@ def _fill_border(im, i2, offset):
             vr = im.getpixel((im.width-w-1, h))
             i2.putpixel((im.width+offset+w, h+offset), vr)
 
-    print('Creating top/bottom borders...')
-    for h in range(offset):
-        for w in range(im.width):
+    for w in tqdm(range(im.width), ascii=True, desc='Creating top/bottom borders'):
+        for h in range(offset):
             vt = im.getpixel((w, h))
             i2.putpixel((w+offset, offset-h), vt)
 
@@ -60,8 +58,9 @@ def main():
     im, filename = read_image()
     offset = calculate_offset(im)
     i2 = create_border_image(im, offset)
-
     im.close()
+
+    print('Saving new image...')
     base, ext = filename.split('.')
     i2.save(f'{base}_borders.{ext}')
     i2.close()
